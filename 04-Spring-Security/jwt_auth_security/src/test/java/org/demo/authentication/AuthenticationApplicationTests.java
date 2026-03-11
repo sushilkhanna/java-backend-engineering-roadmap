@@ -1,10 +1,10 @@
-package org.demo.foreel;
+package org.demo.authentication;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class FoReelApplicationTests {
+class AuthenticationApplicationTests {
 
     @Test
     void contextLoads() {
