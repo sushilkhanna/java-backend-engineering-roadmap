@@ -252,9 +252,9 @@ Basic REST API with full CRUD operations.
 
 Currently working on:
 
-- Spring Security
-- Authentication systems
-- JWT-based authorization
+- Doctor Appointment
+- With Security
+- Real World Based
 
 ---
 
