@@ -3,6 +3,8 @@ package org.demo.doctorappointment.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "doctors")
 @Getter
@@ -19,5 +21,5 @@ public class Doctor {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-    private String availableSlots;
+    private List<String> availableSlots;
 }

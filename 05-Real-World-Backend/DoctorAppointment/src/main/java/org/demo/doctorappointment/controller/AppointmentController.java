@@ -1,7 +1,10 @@
 package org.demo.doctorappointment.controller;
 
+import org.demo.doctorappointment.dto.DoctorDTO;
+import org.demo.doctorappointment.dto.PatientAppointmentDTO;
 import org.demo.doctorappointment.model.Appointment;
 import org.demo.doctorappointment.enums.AppointmentStatus;
+import org.demo.doctorappointment.model.Doctor;
 import org.demo.doctorappointment.service.AppointmentService;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,16 +34,18 @@ public class AppointmentController {
         );
     }
 
-    @GetMapping("/patient/{patientId}")
-    public List<Appointment> getAppointmentsByPatient(@PathVariable Long patientId) {
-        return appointmentService.getAppointmentsByPatient(patientId);
+    @GetMapping("/doctorList")
+    public List<DoctorDTO> doctorList(){
+        return appointmentService.getAllDoctors();
     }
 
-    // Update appointment status (doctor approves/rejects)
-    @PutMapping("/{appointmentId}/status")
-    public Appointment updateStatus(@PathVariable Long appointmentId,
-                                    @RequestParam AppointmentStatus status) {
-        return appointmentService.updateStatus(appointmentId, status);
+    @GetMapping("/doctor/{specialization}")
+    public List<DoctorDTO> getDoctorBySpecialization(@PathVariable("specialization") String specialization){
+        return appointmentService.getAllDoctorsBySpecialization(specialization);
     }
 
+    @GetMapping("/doctor/appointments")
+    public List<PatientAppointmentDTO> getAppointmentsByPatientId(@RequestParam Long patientId){
+        return appointmentService.getAppointmentsByPatientId(patientId);
+    }
 }

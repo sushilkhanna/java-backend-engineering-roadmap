@@ -1,5 +1,7 @@
 package org.demo.doctorappointment.service;
 
+import org.demo.doctorappointment.dto.DoctorDTO;
+import org.demo.doctorappointment.dto.PatientAppointmentDTO;
 import org.demo.doctorappointment.enums.AppointmentStatus;
 import org.demo.doctorappointment.model.Appointment;
 import org.demo.doctorappointment.model.Doctor;
@@ -42,15 +44,38 @@ public class AppointmentService {
         return appointmentRepo.save(appointment);
     }
 
-    public List<Appointment> getAppointmentsByPatient(Long patientId) {
-        return appointmentRepo.findByPatientId(patientId);
+    public List<DoctorDTO> getAllDoctors(){
+        return doctorRepo.findAll().stream()
+                .map(doctor -> new DoctorDTO(
+                        doctor.getUser().getName(),
+                        doctor.getSpecialization(),
+                        doctor.getAvailableSlots()
+                ))
+                .toList();
     }
 
-    public Appointment updateStatus(Long appointmentId, AppointmentStatus status) {
-        Appointment appointment = appointmentRepo.findById(appointmentId)
-                .orElseThrow(() -> new RuntimeException("Appointment not found"));
-        appointment.setStatus(status);
-        return appointmentRepo.save(appointment);
+    public List<DoctorDTO> getAllDoctorsBySpecialization(String specialization){
+        return doctorRepo.findBySpecialization(specialization).stream()
+                .map(doctor -> new DoctorDTO(
+                        doctor.getUser().getName(),
+                        doctor.getSpecialization(),
+                        doctor.getAvailableSlots()
+                ))
+                .toList();
     }
+
+    public List<PatientAppointmentDTO> getAppointmentsByPatientId(Long patientId) {
+        return appointmentRepo.findByPatient_Id(patientId).stream()
+                .map(patientAppointment -> new PatientAppointmentDTO(
+                        patientAppointment.getDoctor().getUser().getName(),
+                        patientAppointment.getDoctor().getSpecialization(),
+                        patientAppointment.getDate(),
+                        patientAppointment.getTime(),
+                        patientAppointment.getStatus()
+                ))
+                .toList();
+    }
+
+
 
 }
