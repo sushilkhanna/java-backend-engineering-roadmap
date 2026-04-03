@@ -252,8 +252,8 @@ Basic REST API with full CRUD operations.
 
 Currently working on:
 
-- Doctor Appointment
-- With Security
+- Security
+- Understanding Microservices to combine Authentication and the Doctor Appointment System
 - Real World Based
 
 ---
