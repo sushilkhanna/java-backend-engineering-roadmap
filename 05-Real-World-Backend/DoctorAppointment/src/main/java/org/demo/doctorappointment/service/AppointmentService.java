@@ -9,7 +9,9 @@ import org.demo.doctorappointment.model.User;
 import org.demo.doctorappointment.repository.AppointmentRepo;
 import org.demo.doctorappointment.repository.DoctorRepo;
 import org.demo.doctorappointment.repository.UserRepo;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -27,17 +29,21 @@ public class AppointmentService {
         this.userRepo=userRepo;
     }
 
-    public Appointment bookAppointment(Long patientId, Long doctorId, LocalDate  date, LocalTime time){
-        User patient =  userRepo.findById(patientId)
-                .orElseThrow(()->new RuntimeException("Patient Not Found"));
-        Doctor doctor =  doctorRepo.findById(doctorId)
-                .orElseThrow(()->new RuntimeException("Doctor Not Found"));
+    public Appointment bookAppointment(String email, Long doctorId,
+                                       String date, String time) {
+        User patient = userRepo.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Patient not found"));
+
+        Doctor doctor = doctorRepo.findById(doctorId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Doctor not found"));
 
         Appointment appointment = Appointment.builder()
                 .patient(patient)
                 .doctor(doctor)
-                .date(date)
-                .time(time)
+                .date(LocalDate.parse(date))
+                .time(LocalTime.parse(time))
                 .status(AppointmentStatus.PENDING)
                 .build();
 

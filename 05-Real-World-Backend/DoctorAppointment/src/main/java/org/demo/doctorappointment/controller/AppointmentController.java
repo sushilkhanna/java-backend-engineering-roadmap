@@ -6,11 +6,14 @@ import org.demo.doctorappointment.model.Appointment;
 import org.demo.doctorappointment.enums.AppointmentStatus;
 import org.demo.doctorappointment.model.Doctor;
 import org.demo.doctorappointment.service.AppointmentService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/appointments")
@@ -22,16 +25,23 @@ public class AppointmentController {
     }
 
     @PostMapping("/book")
-    public Appointment bookAppointment(@RequestParam Long patientId,
-                                       @RequestParam Long doctorId,
-                                       @RequestParam String date,
-                                       @RequestParam String time) {
-        return appointmentService.bookAppointment(
-                patientId,
-                doctorId,
-                LocalDate.parse(date),
-                LocalTime.parse(time)
-        );
+    public ResponseEntity<Map<String, Object>> bookAppointment(
+            @RequestParam Long doctorId,
+            @RequestParam String date,
+            @RequestParam String time) {
+
+        String email = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName(); // ← this gets the email from the JWT
+
+        Appointment appt = appointmentService.bookAppointment(email, doctorId, date, time);
+
+        return ResponseEntity.ok(Map.of(
+                "appointmentId", appt.getId(),
+                "status", appt.getStatus(),
+                "date", appt.getDate(),
+                "time", appt.getTime()
+        ));
     }
 
     @GetMapping("/doctorList")
@@ -39,12 +49,12 @@ public class AppointmentController {
         return appointmentService.getAllDoctors();
     }
 
-    @GetMapping("/doctor/{specialization}")
+    @GetMapping("/doctor/by-specialization/{specialization}")
     public List<DoctorDTO> getDoctorBySpecialization(@PathVariable("specialization") String specialization){
         return appointmentService.getAllDoctorsBySpecialization(specialization);
     }
 
-    @GetMapping("/doctor/appointments")
+    @GetMapping("/my-appointments")
     public List<PatientAppointmentDTO> getAppointmentsByPatientId(@RequestParam Long patientId){
         return appointmentService.getAppointmentsByPatientId(patientId);
     }

@@ -4,7 +4,9 @@ import org.demo.doctorappointment.dto.PatientDTO;
 import org.demo.doctorappointment.model.Doctor;
 import org.demo.doctorappointment.repository.AppointmentRepo;
 import org.demo.doctorappointment.repository.DoctorRepo;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -19,19 +21,27 @@ public class DoctorService {
         this.appointmentRepo = appointmentRepo;
     }
 
-    public Doctor updateAvailability(Long id, List<String> slots){
-        Doctor doctor = doctorRepo.findById(id)
-                .orElseThrow(()->new RuntimeException("Doctor Not Found"));
+    public Doctor updateAvailability(String email, List<String> slots) {
+        // Find the doctor whose user has this email
+        Doctor doctor = doctorRepo.findByUser_Email(email)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Doctor not found"));
+
         doctor.setAvailableSlots(slots);
         return doctorRepo.save(doctor);
     }
 
-    public List<PatientDTO> getAllPatientsByDate(Long doctorId, LocalDate date){
-        return appointmentRepo.findByDoctor_IdAndDate(doctorId, date).stream()
-                .map(appointment -> new PatientDTO(
-                        appointment.getPatient().getName(),
-                        appointment.getPatient().getEmail(),
-                        appointment.getTime()
+    public List<PatientDTO> getAllPatientsByDate(String email, LocalDate date) {
+        Doctor doctor = doctorRepo.findByUser_Email(email)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Doctor not found"));
+
+        return appointmentRepo.findByDoctor_IdAndDate(doctor.getId(), date)
+                .stream()
+                .map(a -> new PatientDTO(
+                        a.getPatient().getName(),
+                        a.getPatient().getEmail(),
+                        a.getTime()
                 ))
                 .toList();
     }
