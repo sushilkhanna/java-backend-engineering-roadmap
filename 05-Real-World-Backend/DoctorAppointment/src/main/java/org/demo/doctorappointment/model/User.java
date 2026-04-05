@@ -14,12 +14,12 @@ import org.demo.doctorappointment.enums.Role;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
-    private String Name;
+    private String name;
     @Column(unique = true,nullable = false)
-    private String Email;
-    private String Password;
+    private String email;
+    private String password;
     @Enumerated(EnumType.STRING)
     private Role role;
 

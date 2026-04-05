@@ -26,11 +26,11 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
+                        // ✅ Auth service only owns these endpoints — permit them freely
                         .requestMatchers("/api/auth/**").permitAll()
 
-                        .requestMatchers("/api/appointments/**").hasRole("PATIENT")
-                        .requestMatchers("/api/doctors/**").hasRole("DOCTOR")
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        // ✅ REMOVED: /api/appointments/**, /api/doctors/**, /api/admin/**
+                        //    Those routes don't exist here. They belong in the appointment service.
 
                         .anyRequest().authenticated()
                 )
@@ -52,5 +52,4 @@ public class SecurityConfig {
             AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
-
 }

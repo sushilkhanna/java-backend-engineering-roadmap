@@ -16,10 +16,13 @@ public class Doctor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String Specialization;
+    private String specialization;
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
+    @ElementCollection
+    @CollectionTable(name="doctor_slots",joinColumns=@JoinColumn(name="doctor_id"))
+    @Column(name="slot")
     private List<String> availableSlots;
 }

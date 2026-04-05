@@ -25,6 +25,14 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
+                        // ✅ FIX #3: Allow auth service to sync users without a token
+                        .requestMatchers("/api/users/sync").permitAll()
+
+                        // ✅ FIX #7: Doctor list endpoints are accessible to all authenticated users,
+                        //            not just PATIENT role — doctors and admins may also need to browse
+                        .requestMatchers("/api/appointments/doctorList").authenticated()
+                        .requestMatchers("/api/appointments/doctor/by-specialization/**").authenticated()
+
                         .requestMatchers("/api/appointments/**").hasRole("PATIENT")
                         .requestMatchers("/api/doctors/**").hasRole("DOCTOR")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")

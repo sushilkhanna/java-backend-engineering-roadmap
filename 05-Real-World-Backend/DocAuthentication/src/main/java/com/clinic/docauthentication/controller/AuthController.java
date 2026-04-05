@@ -23,7 +23,7 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<Map<String,String>> signup(@RequestBody SignupRequest request) {
-        authService.signup(request.getEmail(), request.getPassword(), request.getRole());
+        authService.signup(request.getName(), request.getEmail(), request.getPassword(), request.getRole());
         return ResponseEntity.ok(Map.of("message","Successfully Registered"));
     }
 

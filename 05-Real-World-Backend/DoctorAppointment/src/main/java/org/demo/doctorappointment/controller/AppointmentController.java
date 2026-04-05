@@ -3,21 +3,18 @@ package org.demo.doctorappointment.controller;
 import org.demo.doctorappointment.dto.DoctorDTO;
 import org.demo.doctorappointment.dto.PatientAppointmentDTO;
 import org.demo.doctorappointment.model.Appointment;
-import org.demo.doctorappointment.enums.AppointmentStatus;
-import org.demo.doctorappointment.model.Doctor;
 import org.demo.doctorappointment.service.AppointmentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/appointments")
 public class AppointmentController {
+
     private final AppointmentService appointmentService;
 
     public AppointmentController(AppointmentService appointmentService) {
@@ -31,8 +28,7 @@ public class AppointmentController {
             @RequestParam String time) {
 
         String email = SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getName(); // ← this gets the email from the JWT
+                .getAuthentication().getName();
 
         Appointment appt = appointmentService.bookAppointment(email, doctorId, date, time);
 
@@ -45,17 +41,22 @@ public class AppointmentController {
     }
 
     @GetMapping("/doctorList")
-    public List<DoctorDTO> doctorList(){
+    public List<DoctorDTO> doctorList() {
         return appointmentService.getAllDoctors();
     }
 
     @GetMapping("/doctor/by-specialization/{specialization}")
-    public List<DoctorDTO> getDoctorBySpecialization(@PathVariable("specialization") String specialization){
+    public List<DoctorDTO> getDoctorBySpecialization(
+            @PathVariable("specialization") String specialization) {
         return appointmentService.getAllDoctorsBySpecialization(specialization);
     }
 
+    // ✅ FIX #4: Removed @RequestParam Long patientId — now derives identity from JWT
+    //            Previously any patient could pass someone else's patientId and see their appointments
     @GetMapping("/my-appointments")
-    public List<PatientAppointmentDTO> getAppointmentsByPatientId(@RequestParam Long patientId){
-        return appointmentService.getAppointmentsByPatientId(patientId);
+    public List<PatientAppointmentDTO> getMyAppointments() {
+        String email = SecurityContextHolder.getContext()
+                .getAuthentication().getName();
+        return appointmentService.getMyAppointments(email);
     }
 }

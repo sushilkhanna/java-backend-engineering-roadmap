@@ -25,18 +25,20 @@ public class AuthService {
     }
 
     // Signup (register new user)
-    public User signup(String email, String password, Role role) {
+    public User signup(String name, String email, String password, Role role) {
         if (userRepository.findByEmail(email).isPresent()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT,"Email Already Exists");
         }
 
         User user = User.builder()
+                .name(name)
                 .email(email)
                 .password(passwordEncoder.encode(password)) // hash password
                 .role(role)
                 .build();
 
         return userRepository.save(user);
+
     }
 
     // Login (authenticate and issue JWT)

@@ -1,5 +1,6 @@
 package org.demo.doctorappointment.service;
 
+import org.demo.doctorappointment.dto.DoctorAvailabilityDTO;
 import org.demo.doctorappointment.dto.PatientDTO;
 import org.demo.doctorappointment.model.Doctor;
 import org.demo.doctorappointment.repository.AppointmentRepo;
@@ -13,22 +14,30 @@ import java.util.List;
 
 @Service
 public class DoctorService {
+
     private final DoctorRepo doctorRepo;
     private final AppointmentRepo appointmentRepo;
 
-    public DoctorService(DoctorRepo doctorRepo,  AppointmentRepo appointmentRepo) {
+    public DoctorService(DoctorRepo doctorRepo, AppointmentRepo appointmentRepo) {
         this.doctorRepo = doctorRepo;
         this.appointmentRepo = appointmentRepo;
     }
 
-    public Doctor updateAvailability(String email, List<String> slots) {
-        // Find the doctor whose user has this email
+    // ✅ FIX #10: Returns DoctorAvailabilityDTO instead of raw Doctor entity
+    public DoctorAvailabilityDTO updateAvailability(String email, List<String> slots) {
         Doctor doctor = doctorRepo.findByUser_Email(email)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Doctor not found"));
 
         doctor.setAvailableSlots(slots);
-        return doctorRepo.save(doctor);
+        Doctor saved = doctorRepo.save(doctor);
+
+        return new DoctorAvailabilityDTO(
+                saved.getId(),
+                saved.getUser().getName(),
+                saved.getSpecialization(),
+                saved.getAvailableSlots()
+        );
     }
 
     public List<PatientDTO> getAllPatientsByDate(String email, LocalDate date) {
@@ -45,6 +54,4 @@ public class DoctorService {
                 ))
                 .toList();
     }
-
-
 }
