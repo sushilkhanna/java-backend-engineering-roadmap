@@ -252,10 +252,8 @@ Basic REST API with full CRUD operations.
 
 Currently working on:
 
-- Real World Based
-- Doctor Apointment System
-- Auth and Appointment done by adding both api using microservices
-- Now working on EdgeCases (QA Engineer)
+- Level-6
+- E-commerce Backend
 
 ---
 
