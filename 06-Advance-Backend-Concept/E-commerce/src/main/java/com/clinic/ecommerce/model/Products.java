@@ -20,7 +20,7 @@ public class Products {
 
     @ManyToOne
     @JoinColumn(name="category_id",nullable = false)
-    private Categories categories;
+    private Categories category;
 
     @ManyToOne
     @JoinColumn(name="supplier_id",nullable = false)
