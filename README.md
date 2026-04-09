@@ -254,6 +254,8 @@ Currently working on:
 
 - Level-6
 - E-commerce Backend
+- Product Service - Browse, Search by filter, Search Completed
+- Now Developing the All needed services
 
 ---
 
