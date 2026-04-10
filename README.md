@@ -256,6 +256,7 @@ Currently working on:
 - E-commerce Backend
 - Product Service - Browse, Search by filter, Search Completed
 - Now Developing the All needed services
+- Learning System Design to make it more proper
 
 ---
 
